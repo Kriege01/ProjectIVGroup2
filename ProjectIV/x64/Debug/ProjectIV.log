@@ -3,9 +3,9 @@
   GameUtils.cpp
   Server.cpp
   ServerUtils.cpp
-C:\Users\rykup\source\repos\ProjectIV\ProjectIV\ServerUtils.cpp(24,71): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\rykup\source\repos\ProjectIV\ProjectIV\ServerUtils.cpp(82,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\rykup\source\repos\ProjectIV\ProjectIV\ServerUtils.cpp(128,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\rykup\source\repos\ProjectIVGroup2\ProjectIV\ServerUtils.cpp(22,71): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\rykup\source\repos\ProjectIVGroup2\ProjectIV\ServerUtils.cpp(108,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\rykup\source\repos\ProjectIVGroup2\ProjectIV\ServerUtils.cpp(214,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   TicTacToeState.cpp
   Generating Code...
-  ProjectIV.vcxproj -> C:\Users\rykup\source\repos\ProjectIV\x64\Debug\ProjectIV_Server.exe
+  ProjectIV.vcxproj -> C:\Users\rykup\source\repos\ProjectIVGroup2\x64\Debug\ProjectIV_Server.exe

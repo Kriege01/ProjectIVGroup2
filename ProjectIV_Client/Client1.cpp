@@ -19,27 +19,30 @@ const string GAME_OVER = "GAME_OVER";
 const string CHAT_MESSAGE = "CHAT_MESSAGE";
 
 //function to send a message to the server
-void sendMessage(SOCKET socket, const string& message) {
-    send(socket, message.c_str(), message.size(), 0);
+void sendMessage(SOCKET socket, const std::string& message) {
+    int bytesSent = send(socket, message.c_str(), message.size(), 0);
+    if (bytesSent == SOCKET_ERROR) {
+        std::cerr << "Error sending message to server" << std::endl;
+    }
 }
 
 //function to receive a message from the server
-string receiveMessage(SOCKET socket) {
+std::string receiveMessage(SOCKET socket) {
     char buffer[4096];
     int bytesReceived = recv(socket, buffer, sizeof(buffer), 0);
     if (bytesReceived == SOCKET_ERROR || bytesReceived == 0) {
-        cerr << "Server disconnected" << endl;
+        std::cerr << "Server disconnected" << std::endl;
         closesocket(socket);
         WSACleanup();
         exit(-1);
     }
     buffer[bytesReceived] = '\0';
-    return string(buffer);
+    return std::string(buffer);
 }
 
 //function to send game selection signal to the server
 void sendGameSelection(SOCKET socket, int gameChoice) {
-    string message = MENU_SELECTION + ":" + to_string(gameChoice);
+    std::string message = MENU_SELECTION + ":" + std::to_string(gameChoice);
     send(socket, message.c_str(), message.size(), 0);
 }
 
@@ -128,19 +131,19 @@ int main() {
         return -1;
     }
 
-    cout << "Connected to server" << endl;
-    cout << "Socket number: " << tcpSocket << endl; //print the socket number
+    std::cout << "Connected to server" << std::endl;
+    std::cout << "Socket number: " << tcpSocket << std::endl; //print the socket number
 
     //send menu selection to server
-    cout << "Choose a game:" << endl;
-    cout << "1. Tic Tac Toe" << endl;
-    cout << "2. Checkers" << endl;
+    std::cout << "Choose a game:" << std::endl;
+    std::cout << "1. Tic Tac Toe" << std::endl;
+    std::cout << "2. Checkers" << std::endl;
     int gameChoice;
-    cin >> gameChoice;
+    std::cin >> gameChoice;
     sendGameSelection(tcpSocket, gameChoice);
 
     //wait for the game start signal from the server
-    string expectedGame = (gameChoice == 1) ? "TicTacToe" : "Checkers";
+    std::string expectedGame = (gameChoice == 1) ? "TicTacToe" : "Checkers";
     waitForGameStart(tcpSocket, expectedGame);
 
     //game loop
