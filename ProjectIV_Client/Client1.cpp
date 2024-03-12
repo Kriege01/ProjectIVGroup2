@@ -8,7 +8,7 @@
 
 using namespace std;
 
-// Define message types
+//define message types
 const string MENU_SELECTION = "MENU_SELECTION";
 const string TIC_TAC_TOE_MOVE = "TIC_TAC_TOE_MOVE";
 const string TIC_TAC_TOE_STATE_UPDATE = "TIC_TAC_TOE_STATE_UPDATE";
@@ -18,12 +18,12 @@ const string GAME_START_SIGNAL = "GAME_START_SIGNAL";
 const string GAME_OVER = "GAME_OVER";
 const string CHAT_MESSAGE = "CHAT_MESSAGE";
 
-// Function to send a message to the server
+//function to send a message to the server
 void sendMessage(SOCKET socket, const string& message) {
     send(socket, message.c_str(), message.size(), 0);
 }
 
-// Function to receive a message from the server
+//function to receive a message from the server
 string receiveMessage(SOCKET socket) {
     char buffer[4096];
     int bytesReceived = recv(socket, buffer, sizeof(buffer), 0);
@@ -37,23 +37,24 @@ string receiveMessage(SOCKET socket) {
     return string(buffer);
 }
 
-// Function to send game selection signal to the server
+//function to send game selection signal to the server
 void sendGameSelection(SOCKET socket, int gameChoice) {
     string message = MENU_SELECTION + ":" + to_string(gameChoice);
     send(socket, message.c_str(), message.size(), 0);
 }
 
-// Function to wait for game start signal from the server
-void waitForGameStart(SOCKET socket) {
+//function to wait for game start signal from the server
+void waitForGameStart(SOCKET socket, const string& expectedGame) {
     char buffer[4096];
     int bytesReceived;
 
-    // Loop until a game start signal is received
-    while (true) {
-        // Print "Waiting for another player" message
-        cout << "Waiting for another player..." << endl;
+    //print "Waiting for another player" message
+    cout << "Waiting for another player..." << endl;
 
-        // Receive a message from the server
+    //loop until a game start signal is received
+    while (true) {
+
+        //receive a message from the server
         bytesReceived = recv(socket, buffer, sizeof(buffer), 0);
         if (bytesReceived == SOCKET_ERROR || bytesReceived == 0) {
             cerr << "Server disconnected" << endl;
@@ -63,16 +64,24 @@ void waitForGameStart(SOCKET socket) {
         }
         buffer[bytesReceived] = '\0';
 
-        // Parse the message to check for a game start signal
+        //parse the message to check for a game start signal
         string message(buffer);
         string messageType = message.substr(0, message.find(":"));
 
         if (messageType == GAME_START_SIGNAL) {
-            // Game start signal received, exit the function
-            break;
+            //print that the game start signal is received
+            cout << "Received game start signal for " << expectedGame << endl;
+
+            //extract game name from the message
+            string gameName = message.substr(message.find(":") + 1);
+            if (gameName == expectedGame) {
+                //game start signal received for the expected game, exit the function
+                cout << "Exiting waitForGameStart function..." << endl;
+                break;
+            }
         }
 
-        // If not a game start signal, continue waiting
+        //if not a game start signal, continue waiting
     }
 }
 
@@ -120,8 +129,9 @@ int main() {
     }
 
     cout << "Connected to server" << endl;
+    cout << "Socket number: " << tcpSocket << endl; //print the socket number
 
-    // Send menu selection to server
+    //send menu selection to server
     cout << "Choose a game:" << endl;
     cout << "1. Tic Tac Toe" << endl;
     cout << "2. Checkers" << endl;
@@ -129,21 +139,25 @@ int main() {
     cin >> gameChoice;
     sendGameSelection(tcpSocket, gameChoice);
 
-    // Wait for the game start signal from the server
-    waitForGameStart(tcpSocket);
+    //wait for the game start signal from the server
+    string expectedGame = (gameChoice == 1) ? "TicTacToe" : "Checkers";
+    waitForGameStart(tcpSocket, expectedGame);
 
-    // Game loop
+    //game loop
     while (true) {
-        // Receive message from server
+        //receive message from server
         string message = receiveMessage(tcpSocket);
 
-        // Extract message type
+        // Print received message
+        cout << "Received message from server: " << message << endl;
+
+        //extract message type
         string messageType = message.substr(0, message.find(":"));
         string messageData = message.substr(message.find(":") + 1);
 
-        // Handle message based on type
+        //handle message based on type
         if (messageType == TIC_TAC_TOE_STATE_UPDATE) {
-            // Display Tic Tac Toe board
+            //display Tic Tac Toe board
             cout << "Tic Tac Toe Board:" << endl;
             cout << " " << messageData[0] << " | " << messageData[1] << " | " << messageData[2] << endl;
             cout << "-----------" << endl;
@@ -151,29 +165,30 @@ int main() {
             cout << "-----------" << endl;
             cout << " " << messageData[6] << " | " << messageData[7] << " | " << messageData[8] << endl;
 
-            // Check if game over
+            //check if game over
             if (messageData[9] == '1') {
                 cout << "Game Over!" << endl;
                 if (messageData[10] == 'X') {
                     cout << "X wins!" << endl;
-                } else if (messageData[10] == 'O') {
+                }
+                else if (messageData[10] == 'O') {
                     cout << "O wins!" << endl;
-                } else {
+                }
+                else {
                     cout << "It's a draw!" << endl;
                 }
                 break;
             }
 
-            // Make a move
+            //make a move
             cout << "Enter row and column to make a move (e.g., 1 2): ";
             int row, col;
             cin >> row >> col;
             sendMessage(tcpSocket, TIC_TAC_TOE_MOVE + ":" + to_string(row) + "," + to_string(col));
-        } else if (messageType == CHECKERS_STATE_UPDATE) {
-            // Display Checkers board
+        }
+        else if (messageType == CHECKERS_STATE_UPDATE) {
+            //display Checkers board
             cout << "Checkers Board:" << endl;
-            // Display Checkers board
-            // Display Checkers board
             for (int i = 0; i < 8; ++i) {
                 for (int j = 0; j < 8; ++j) {
                     cout << messageData[i * 8 + j] << " ";
@@ -181,20 +196,22 @@ int main() {
                 cout << endl;
             }
 
-            // Check if game over
+            //check if game over
             if (messageData[64] == '1') {
                 cout << "Game Over!" << endl;
                 if (messageData[65] == 'R') {
                     cout << "Red wins!" << endl;
-                } else if (messageData[65] == 'B') {
+                }
+                else if (messageData[65] == 'B') {
                     cout << "Black wins!" << endl;
-                } else {
+                }
+                else {
                     cout << "It's a draw!" << endl;
                 }
                 break;
             }
 
-            // Make a move
+            //make a move
             cout << "Enter start row, start column, end row, and end column to make a move (e.g., 2 1 3 2): ";
             int startRow, startCol, endRow, endCol;
             cin >> startRow >> startCol >> endRow >> endCol;
@@ -202,7 +219,7 @@ int main() {
         }
     }
 
-    // Close the socket
+    //close the socket
     closesocket(tcpSocket);
     WSACleanup();
     return 0;

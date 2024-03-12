@@ -10,6 +10,23 @@ SOCKET serverSocket;
 std::vector<SOCKET> clients;
 std::mutex mtx;
 
+//define the number of players required to start a game
+const int PLAYERS_REQUIRED_TO_START = 2;
+
+//maintain a map to track the number of players waiting for each game
+map<string, int> playersWaitingCount;
+
+//mutex for synchronizing access to playersWaitingCount
+mutex playersWaitingCountMutex;
+
+void sendMessage(SOCKET clientSocket, const string& message) {
+    //send message to client
+    int bytesSent = send(clientSocket, message.c_str(), message.length(), 0);
+    if (bytesSent == SOCKET_ERROR) {
+        cerr << "Error sending message to client" << endl;
+    }
+}
+
 // logging functionality
 void logMessage(const std::string& direction, const std::string& message) {
     std::ofstream logFile("logfile.txt", std::ios::app); // Open the log file in append mode
@@ -25,7 +42,7 @@ void logMessage(const std::string& direction, const std::string& message) {
 
 void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersState& checkersState) {
     while (true) {
-        std::string recievedMessage; // meesage IN
+        std::string recievedMessage; // message IN
         //receive message from client
         char buffer[4096];
         int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
@@ -47,6 +64,9 @@ void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersS
         recievedMessage = message;  // message IN
         logMessage("IN", recievedMessage);
 
+        //print received message
+        cout << "Received message from client: " << message << endl;
+
         //extract message type
         string messageType = message.substr(0, message.find(":"));
 
@@ -54,8 +74,23 @@ void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersS
         if (messageType == MENU_SELECTION) {
             //menu selection
             string gameChoice = message.substr(message.find(":") + 1);
+            //start Tic Tac Toe
             if (gameChoice == "1") {
-                //start Tic Tac Toe
+                {
+                    lock_guard<mutex> lock(playersWaitingCountMutex);
+                    playersWaitingCount["TicTacToe"]++;
+                    if (playersWaitingCount["TicTacToe"] == PLAYERS_REQUIRED_TO_START) {
+                        //send game start signal to clients waiting for Tic Tac Toe
+                        cout << "Sending game start signal for Tic Tac Toe to clients:" << endl;
+                        for (SOCKET socket : clients) {
+                            sendMessage(socket, GAME_START_SIGNAL + ":" + "TicTacToe");
+                            cout << " - Client " << socket << endl;
+                        }
+                        playersWaitingCount["TicTacToe"] = 0; //reset waiting count
+                    }
+                }
+
+                //TicTacToe Game loop
                 while (!ticTacToeState.isGameOver()) {
                     //send Tic Tac Toe state to client
                     string gameState = TIC_TAC_TOE_STATE_UPDATE + ":" + serializeTicTacToeState(ticTacToeState);
@@ -85,8 +120,23 @@ void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersS
                     ticTacToeState.makeMove(row, col);
                 }
             }
+            //start Checkers game
             else if (gameChoice == "2") {
-                //start Checkers game
+                {
+                    lock_guard<mutex> lock(playersWaitingCountMutex);
+                    playersWaitingCount["Checkers"]++;
+                    if (playersWaitingCount["Checkers"] == PLAYERS_REQUIRED_TO_START) {
+                        //send game start signal to clients waiting for Checkers
+                        cout << "Sending game start signal for Checkers to clients:" << endl;
+                        for (SOCKET socket : clients) {
+                            sendMessage(socket, GAME_START_SIGNAL + ":" + "Checkers");
+                            cout << " - Client " << socket << endl;
+                        }
+                        playersWaitingCount["Checkers"] = 0; //reset waiting count
+                    }
+                }
+
+                //Checkers game loop
                 while (!checkersState.isGameOver()) {
                     //send Checkers state to client
                     string gameState = CHECKERS_STATE_UPDATE + ":" + serializeCheckersState(checkersState);

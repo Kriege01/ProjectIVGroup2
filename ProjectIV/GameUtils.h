@@ -5,6 +5,6 @@
 #include "TicTacToeState.h"
 #include "CheckersState.h"
 
-// Declare utility functions
+//game utility functions
 std::string serializeTicTacToeState(const TicTacToeState& state);
 std::string serializeCheckersState(const CheckersState& state);

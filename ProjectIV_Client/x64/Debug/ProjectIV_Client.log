@@ -1,5 +1,5 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ProjectIV_Client.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ProjectIV_Client.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Client1.cpp
-C:\Users\Tanishk Sharma\Downloads\ProjectIV\ProjectIV\ProjectIV_Client\Client1.cpp(23,52): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Tanishk Sharma\Downloads\ProjectIV\ProjectIV\ProjectIV_Client\Client1.cpp(43,52): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  ProjectIV_Client.vcxproj -> C:\Users\Tanishk Sharma\Downloads\ProjectIV\ProjectIV\x64\Debug\ProjectIV_Client1.exe
+C:\Users\rykup\source\repos\ProjectIV\ProjectIV_Client\Client1.cpp(23,47): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\rykup\source\repos\ProjectIV\ProjectIV_Client\Client1.cpp(43,47): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  ProjectIV_Client.vcxproj -> C:\Users\rykup\source\repos\ProjectIV\x64\Debug\ProjectIV_Client1.exe
