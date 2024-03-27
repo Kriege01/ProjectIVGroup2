@@ -12,6 +12,7 @@
 #include "TicTacToeState.h"
 #include "CheckersState.h"
 #include "Protocol.h"
+#include "UserManagement.h"
 
 extern SOCKET serverSocket;
 extern std::vector<SOCKET> clients;
@@ -19,5 +20,5 @@ extern std::mutex mtx;
 
 //server utility functions
 void sendMessage(SOCKET clientSocket, const std::string& message);
-void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersState& checkersState);
+void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersState& checkersState, UserManager& userManager);
 void logMessage(const std::string& direction, const std::string& message);

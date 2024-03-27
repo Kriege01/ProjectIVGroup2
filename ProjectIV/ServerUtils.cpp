@@ -1,7 +1,19 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <map>
+#include <mutex>
+#include <fstream>
+#include <winsock2.h>
+#include <algorithm>
+
 #include "ServerUtils.h"
 #include "GameUtils.h"
 #include "TicTacToeState.h"
 #include "CheckersState.h"
+#include "UserManagement.h"
+#include "Protocol.h"
 
 using namespace std;
 
@@ -12,6 +24,7 @@ std::mutex mtx;
 
 //define the number of players required to start a game
 const int PLAYERS_REQUIRED_TO_START = 2;
+const int MAX_AUTH_ATTEMPTS = 3;
 
 //maintain a map to track the number of players waiting for each game
 std::map<std::string, int> playersWaitingCount;
@@ -38,41 +51,87 @@ void logMessage(const std::string& direction, const std::string& message) {
     }
 }
 
-void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersState& checkersState) {
-    while (true) {
-        std::string recievedMessage; // message IN
-        // Receive message from client
-        char buffer[4096];
-        int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
-        if (bytesReceived == SOCKET_ERROR || bytesReceived == 0) {
-            std::cerr << "Client disconnected" << std::endl;
-            // Remove client socket from the list
-            mtx.lock();
-            clients.erase(std::remove(clients.begin(), clients.end(), clientSocket), clients.end());
-            mtx.unlock();
+void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersState& checkersState, UserManager& userManager) {
+    string receivedMessage;
+    string messageType;
+    string username;
+    string password;
+    bool isAuthenticated = false;
+    int authAttempts = 0;
+
+    // Authentication loop
+    while (!isAuthenticated && authAttempts < MAX_AUTH_ATTEMPTS) {
+        char buffer[4096] = { 0 };
+        int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+        if (bytesReceived <= 0) {
+            cerr << "Error: Client disconnected or error receiving data." << endl;
             closesocket(clientSocket);
             return;
         }
-        if (bytesReceived < sizeof(buffer)) {
-            buffer[bytesReceived] = '\0';
+
+        buffer[bytesReceived] = '\0';  // Ensure null-terminated string
+        string message(buffer);
+        logMessage("IN", message);
+        cout << "Received message from client: " << message << endl;
+
+        istringstream iss(message);
+        string messageType;
+        getline(iss, messageType, ':');
+
+        // Handle authentication
+        if (messageType == USER_REGISTER || messageType == USER_LOGIN) {
+            getline(iss, username, ':');
+            getline(iss, password);
+            isAuthenticated = (messageType == USER_REGISTER) ?
+                userManager.registerUser(username, password) :
+                userManager.loginUser(username, password);
+
+            string responseMessage = isAuthenticated ? AUTH_SUCCESS : AUTH_FAILURE;
+            sendMessage(clientSocket, responseMessage);
+            logMessage("OUT", responseMessage);
+
+            if (!isAuthenticated) {
+                authAttempts++;
+            }
+            else {
+                break;  // Exit the loop if authenticated
+            }
         }
         else {
-            cerr << "Received message is larger than the buffer size" << endl;
+            sendMessage(clientSocket, "AUTH_REQUIRED: Please log in or register.");
+            logMessage("OUT", "AUTH_REQUIRED: Client tried to skip authentication.");
+        }
+    }
+
+    // If the client failed to authenticate after MAX_AUTH_ATTEMPTS
+    if (!isAuthenticated) {
+        // If authentication fails after maximum attempts
+        sendMessage(clientSocket, "AUTH_MAX_ATTEMPTS: Maximum authentication attempts reached.");
+        logMessage("OUT", "Maximum authentication attempts reached. Disconnecting client.");
+        closesocket(clientSocket);
+        return; // Disconnect the client
+    }
+
+    while (true) {
+        char buffer[4096] = { 0 }; // Initialize the buffer to zero
+        int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0); // Leave space for null-terminator
+        if (bytesReceived <= 0) {
+            cerr << "Client disconnected" << endl;
+            mtx.lock();
+            clients.erase(remove(clients.begin(), clients.end(), clientSocket), clients.end());
+            mtx.unlock();
             return;
         }
 
+        // The buffer is already null-terminated based on initialization above
         string message(buffer);
+        logMessage("IN", message);
 
-        //log received message
-        recievedMessage = message;  // message IN
-        logMessage("IN", recievedMessage);
-
-        //print received message
+        // Print received message
         cout << "Received message from client: " << message << endl;
 
-        //extract message type
-        string messageType = message.substr(0, message.find(":"));
-        cout << "Message type: " << messageType << endl;
+        istringstream iss(message);
+        getline(iss, messageType, ':');
 
         // Depending on the message type, extract additional parameters
         if (messageType == TIC_TAC_TOE_MOVE) {
@@ -119,7 +178,6 @@ void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersS
                             }
                         }
                         mtx.unlock();
-                        closesocket(clientSocket);
                         return;
                     }
                     //ensure moveBuffer is null-terminated
@@ -224,7 +282,6 @@ void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersS
                             }
                         }
                         mtx.unlock();
-                        closesocket(clientSocket);
                         return;
                     }
                     moveBuffer[moveBytesReceived - 1] = '\0';
@@ -258,5 +315,6 @@ void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersS
         }
         std::string responseMessage = "Response to client";  // message out
         logMessage("OUT", responseMessage);
+     
     }
 }

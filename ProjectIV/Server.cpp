@@ -5,6 +5,7 @@
 #include "CheckersState.h"
 #include "Protocol.h"
 #include "ServerUtils.h"
+#include "UserManagement.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -76,7 +77,8 @@ int main() {
         mtx.unlock();
 
         //create a thread to handle the client
-        thread clientThread(handleClient, clientSocket, ref(ticTacToeState), ref(checkersState));
+        UserManager userManager;
+        thread clientThread(handleClient, clientSocket, ref(ticTacToeState), ref(checkersState), ref(userManager));
         clientThread.detach(); //detach thread to run independently
     }
 

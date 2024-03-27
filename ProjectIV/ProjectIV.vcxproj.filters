@@ -30,6 +30,9 @@
     <ClCompile Include="TicTacToeState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UserManagement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TicTacToeState.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Protocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserManagement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

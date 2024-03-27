@@ -65,3 +65,27 @@
 [IN] MENU_SELECTION:1
 [IN] MENU_SELECTION:1
 [OUT] Response to client
+[IN] MENU_SELECTION:1
+[IN] MENU_SELECTION:1
+[IN] login:Tanishk:0505
+[OUT] Response to client
+[IN] login:Sharma:0404
+[OUT] Response to client
+[IN] MENU_SELECTION:1
+[IN] MENU_SELECTION:1
+[IN] login:Tanishk:0505
+[OUT] Response to client
+[IN] register:TS:0504
+[OUT] Response to client
+[IN] login:Tanishk:0505
+[OUT] Response to client
+[IN] login:Tanishk:0505
+[OUT] Response to client
+[IN] login:Tanishk:0505
+[OUT] AUTH_REQUIRED: Client tried to skip authentication.
+[IN] login:Tanishk:0505
+[OUT] AUTH_REQUIRED: Client tried to skip authentication.
+[IN] register:Tanishk:0505
+[OUT] AUTH_REQUIRED: Client tried to skip authentication.
+[IN] register:Andrew:and01
+[OUT] AUTH_REQUIRED: Client tried to skip authentication.

@@ -9,6 +9,10 @@
 using namespace std;
 
 //define message types
+const std::string USER_LOGIN = "USER_LOGIN";
+const std::string USER_REGISTER = "USER_REGISTER";
+const std::string AUTH_SUCCESS = "AUTH_SUCCESS";
+const std::string AUTH_FAILURE = "AUTH_FAILURE";
 const string MENU_SELECTION = "MENU_SELECTION";
 const string TIC_TAC_TOE_MOVE = "TIC_TAC_TOE_MOVE";
 const string TIC_TAC_TOE_STATE_UPDATE = "TIC_TAC_TOE_STATE_UPDATE";
@@ -85,6 +89,46 @@ void waitForGameStart(SOCKET socket, const string& expectedGame) {
     }
 }
 
+void authenticateUser(SOCKET& tcpSocket) {
+    std::string username, password, serverResponse, command;
+
+    // Ask the user whether they want to register or log in
+    std::cout << "Do you want to register or login? (register/login): ";
+    std::cin >> command;
+
+    // Validate command
+    if (command != "register" && command != "login") {
+        std::cerr << "Invalid command. Please type 'register' or 'login'." << std::endl;
+        return; // Exit the function if the command is not valid
+    }
+
+    // Get username and password from user
+    std::cout << "Username: ";
+    std::cin >> username;
+    std::cout << "Password: ";
+    std::cin >> password;
+
+    // Send authentication information to the server
+    std::string messageToSend = command + ":" + username + ":" + password;
+    sendMessage(tcpSocket, messageToSend);
+
+    // Wait for a response from the server
+    serverResponse = receiveMessage(tcpSocket);
+
+    // Check server's response
+    if (serverResponse == "AUTH_SUCCESS") {
+        std::cout << "Authentication successful." << std::endl;
+        // The user is authenticated; you can proceed to the next part of your application
+    }
+    else if (serverResponse == "AUTH_FAILURE") {
+        std::cout << "Authentication failed. Please try again." << std::endl;
+        // The user failed to authenticate; you may want to allow retrying or exiting
+    }
+    else {
+        std::cout << "Received an unexpected response from the server." << std::endl;
+        // Received an unknown response; you may want to handle this case appropriately
+    }
+}
 
 int main() {
     // Initialize Winsock
@@ -130,6 +174,9 @@ int main() {
 
     cout << "Connected to server" << endl;
     cout << "Socket number: " << tcpSocket << endl; //print the socket number
+
+    // Authenticate before game selection
+    authenticateUser(tcpSocket);
 
     //send menu selection to server
     cout << "Choose a game:" << endl;

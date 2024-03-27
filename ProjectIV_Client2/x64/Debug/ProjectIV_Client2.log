@@ -1,4 +1,1 @@
-﻿  Client2.cpp
-C:\Users\rykup\source\repos\ProjectIVGroup2\ProjectIV_Client2\Client2.cpp(23,47): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\rykup\source\repos\ProjectIVGroup2\ProjectIV_Client2\Client2.cpp(43,47): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  ProjectIV_Client2.vcxproj -> C:\Users\rykup\source\repos\ProjectIVGroup2\x64\Debug\ProjectIV_Client2.exe
+﻿

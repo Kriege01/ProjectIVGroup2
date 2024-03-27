@@ -1,11 +1,1 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ProjectIV.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  CheckersState.cpp
-  GameUtils.cpp
-  Server.cpp
-  ServerUtils.cpp
-C:\Users\rykup\source\repos\ProjectIVGroup2\ProjectIV\ServerUtils.cpp(22,71): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\rykup\source\repos\ProjectIVGroup2\ProjectIV\ServerUtils.cpp(108,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\rykup\source\repos\ProjectIVGroup2\ProjectIV\ServerUtils.cpp(214,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  TicTacToeState.cpp
-  Generating Code...
-  ProjectIV.vcxproj -> C:\Users\rykup\source\repos\ProjectIVGroup2\x64\Debug\ProjectIV_Server.exe
+﻿

@@ -1,7 +1,16 @@
-#include "ServerUtils.h"
-#include "GameUtils.h"
-#include "TicTacToeState.h"
-#include "CheckersState.h"
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <map>
+#include <mutex>
+#include <fstream>
+#include <winsock2.h>
+#include "ServerUtils.h" 
+#include "GameUtils.h" 
+#include "TicTacToeState.h" 
+#include "CheckersState.h" 
+#include "UserManagement.h"
 
 using namespace std;
 
@@ -12,6 +21,10 @@ std::mutex mtx;
 
 //define the number of players required to start a game
 const int PLAYERS_REQUIRED_TO_START = 2;
+const std::string USER_REGISTER = "USER_REGISTER";
+const std::string USER_LOGIN = "USER_LOGIN";
+const std::string AUTH_SUCCESS = "AUTH_SUCCESS";
+const std::string AUTH_FAILURE = "AUTH_FAILURE";
 
 //maintain a map to track the number of players waiting for each game
 map<string, int> playersWaitingCount;
@@ -40,35 +53,55 @@ void logMessage(const std::string& direction, const std::string& message) {
     }
 }
 
-void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersState& checkersState) {
+void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersState& checkersState, UserManager userManager) {
+    // Declare variables used for communication
+    std::string receivedMessage;
+    std::string messageType;
+    std::string username;
+    std::string password;
+    bool isAuthenticated = false;
+
     while (true) {
-        std::string recievedMessage; // message IN
-        //receive message from client
-        char buffer[4096];
-        int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
-        if (bytesReceived == SOCKET_ERROR || bytesReceived == 0) {
+        char buffer[4096] = { 0 }; // Initialize the buffer to zero
+        int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0); // Leave space for null-terminator
+        if (bytesReceived <= 0) {
             cerr << "Client disconnected" << endl;
             mtx.lock();
-            for (auto it = clients.begin(); it != clients.end(); ++it) {
-                if (*it == clientSocket) {
-                    clients.erase(it);
-                    break;
-                }
-            }
+            clients.erase(remove(clients.begin(), clients.end(), clientSocket), clients.end());
             mtx.unlock();
             closesocket(clientSocket);
             return;
         }
-        buffer[bytesReceived] = '\0';
-        string message(buffer);
-        recievedMessage = message;  // message IN
-        logMessage("IN", recievedMessage);
 
-        //print received message
+        // The buffer is already null-terminated based on initialization above
+        string message(buffer);
+        logMessage("IN", message);
+
+        // Print received message
         cout << "Received message from client: " << message << endl;
 
-        //extract message type
-        string messageType = message.substr(0, message.find(":"));
+        istringstream iss(message);
+        getline(iss, messageType, ':');
+
+        if (messageType == USER_REGISTER || messageType == USER_LOGIN) {
+            getline(iss, username, ':');
+            getline(iss, password);
+
+            if (messageType == USER_REGISTER) {
+                isAuthenticated = userManager.registerUser(username, password);
+            }
+            else if (messageType == USER_LOGIN) {
+                isAuthenticated = userManager.loginUser(username, password);
+            }
+
+            string responseMessage = isAuthenticated ? AUTH_SUCCESS : AUTH_FAILURE;
+            sendMessage(clientSocket, responseMessage);
+            logMessage("OUT", responseMessage);
+
+            if (!isAuthenticated) {
+                continue; // Allow the client to try again
+            }
+        }
 
         //handle based on type
         if (messageType == MENU_SELECTION) {

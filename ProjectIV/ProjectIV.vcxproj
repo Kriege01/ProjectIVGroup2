@@ -133,6 +133,7 @@
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerUtils.cpp" />
     <ClCompile Include="TicTacToeState.cpp" />
+    <ClCompile Include="UserManagement.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CheckersState.h" />
@@ -140,6 +141,7 @@
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="ServerUtils.h" />
     <ClInclude Include="TicTacToeState.h" />
+    <ClInclude Include="UserManagement.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

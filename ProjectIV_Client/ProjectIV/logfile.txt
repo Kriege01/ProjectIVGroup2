@@ -1,0 +1,14 @@
+[IN] MENU_SELECTION:1
+[IN] MENU_SELECTION:1
+[IN] MENU_SELECTION:1
+[IN] MENU_SELECTION:1
+[IN] register:Tanishk:0505
+[OUT] Response to client
+[IN] login:Tanishk:0505
+[OUT] Response to client
+[IN] login:absahj:sdadsad
+[OUT] Response to client
+[IN] register:Sharma:0404
+[OUT] Response to client
+[IN] login:Tanishk:0505
+[OUT] Response to client

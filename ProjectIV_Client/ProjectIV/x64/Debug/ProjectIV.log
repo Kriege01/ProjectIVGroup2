@@ -1,11 +1,16 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ProjectIV.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  CheckersState.cpp
-  GameUtils.cpp
-  Server.cpp
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ProjectIV.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   ServerUtils.cpp
-C:\Users\rykup\source\repos\ProjectIV\ProjectIV\ServerUtils.cpp(24,71): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\rykup\source\repos\ProjectIV\ProjectIV\ServerUtils.cpp(82,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\rykup\source\repos\ProjectIV\ProjectIV\ServerUtils.cpp(128,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\ServerUtils.cpp(24,19): error C2374: 'USER_REGISTER': redefinition; multiple initialization
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\Protocol.h(7,19): message : see declaration of 'USER_REGISTER'
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\ServerUtils.cpp(25,19): error C2374: 'USER_LOGIN': redefinition; multiple initialization
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\Protocol.h(8,19): message : see declaration of 'USER_LOGIN'
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\ServerUtils.cpp(26,19): error C2374: 'AUTH_SUCCESS': redefinition; multiple initialization
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\Protocol.h(10,19): message : see declaration of 'AUTH_SUCCESS'
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\ServerUtils.cpp(27,19): error C2374: 'AUTH_FAILURE': redefinition; multiple initialization
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\Protocol.h(11,19): message : see declaration of 'AUTH_FAILURE'
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\ServerUtils.cpp(37,76): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\ServerUtils.cpp(130,78): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Tanishk Sharma\OneDrive\Documents\Desktop\PROG 4\working\ProjectIV_Client\ProjectIV\ServerUtils.cpp(176,78): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   TicTacToeState.cpp
+  UserManagement.cpp
   Generating Code...
-  ProjectIV.vcxproj -> C:\Users\rykup\source\repos\ProjectIV\x64\Debug\ProjectIV_Server.exe
