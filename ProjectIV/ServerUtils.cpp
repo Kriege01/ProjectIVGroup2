@@ -227,16 +227,31 @@ void handleClient(SOCKET clientSocket, TicTacToeState& ticTacToeState, CheckersS
                         closesocket(clientSocket);
                         return;
                     }
-                    moveBuffer[moveBytesReceived - 1] = '\0';
+                    moveBuffer[moveBytesReceived] = '\0';
                     string moveMessage(moveBuffer);
-                    //extract move coordinates
-                    int startRow = stoi(moveMessage.substr(0, moveMessage.find(",")));
-                    moveMessage = moveMessage.substr(moveMessage.find(",") + 1);
-                    int startCol = stoi(moveMessage.substr(0, moveMessage.find(",")));
-                    moveMessage = moveMessage.substr(moveMessage.find(",") + 1);
-                    int endRow = stoi(moveMessage.substr(0, moveMessage.find(",")));
-                    moveMessage = moveMessage.substr(moveMessage.find(",") + 1);
-                    int endCol = stoi(moveMessage);
+
+                    // Extract move coordinates
+                    size_t colonPos = moveMessage.find(":");
+                    if (colonPos == string::npos) {
+                        cerr << "Error: Colon not found in move message" << endl;
+                        return;
+                    }
+
+                    // Extract move coordinates from the message
+                    string moveCoordinates = moveMessage.substr(colonPos + 1);
+                    size_t commaPos = moveCoordinates.find(",");
+                    if (commaPos == string::npos) {
+                        cerr << "Error: Comma not found in move message" << endl;
+                        return;
+                    }
+
+                    // Extract start and end positions
+                    int startRow = stoi(moveCoordinates.substr(0, commaPos));
+                    moveCoordinates = moveCoordinates.substr(commaPos + 1);
+                    int startCol = stoi(moveCoordinates.substr(0, commaPos));
+                    moveCoordinates = moveCoordinates.substr(commaPos + 1);
+                    int endRow = stoi(moveCoordinates.substr(0, commaPos));
+                    int endCol = stoi(moveCoordinates.substr(commaPos + 1));
                     //make move in Checkers
                     checkersState.makeMove(startRow, startCol, endRow, endCol);
                 }
