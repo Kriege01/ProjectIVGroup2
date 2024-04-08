@@ -1,3 +1,0 @@
-﻿  ChatimageClient.cpp
-C:\Users\User\source\repos\ChatimageClient\ChatimageClient\ChatimageClient.cpp(62,41): warning C4244: 'argument': conversion from 'std::streamsize' to 'int', possible loss of data
-  ChatimageClient.vcxproj -> C:\Users\User\source\repos\ChatimageClient\x64\Debug\ChatimageClient.exe
